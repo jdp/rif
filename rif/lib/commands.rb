@@ -27,14 +27,13 @@ module Rif
       southwest
       west
       northwest
-    ).each do |direction|
-      direction = direction.to_sym
-      define_method(direction) do
-        direction = direction.to_s
-        if @state.room.exits.key?(direction)
-          @state.room = @game.rooms[Room.sanitise_id(@state.room.exits[direction])]
+    ).each do |dir|
+      dir = dir.to_sym
+      define_method(dir) do
+        if @state.room.exits.key?(dir)
+          @state.room = @game.rooms[Room.sanitise_id(@state.room.exits[dir])]
           @state.turn!
-          describe
+          @state.room.visit
         else
           "I can't go that way"
         end
@@ -49,6 +48,7 @@ module Rif
     alias :w :west
     alias :ne :northeast
     alias :nw :northwest
+    alias :look :describe
     
   end
 end
