@@ -1,5 +1,10 @@
 %w(
   room
+).each do |f|
+  require File.join(File.dirname(__FILE__), 'lib', 'elements', f)
+end
+
+%w(
   game
   state
   commands

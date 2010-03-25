@@ -1,15 +1,17 @@
 module Rif
   class Room
 
+    attr_writer :description
+
     def self.sanitise_id(id)
       id.to_s.strip.to_sym
     end
 
     def initialize(id)
       @id = self.class.sanitise_id(id)
-      @description = []
-      @events = {:visit => Proc.new { @description = @description[0,1]; @description }}
-      @exits = {}
+      @messages = []
+      @events = {:look => Proc.new { description }}
+      @exits = {:idle => @id}
       @locals = {}
       yield self if block_given?
     end
@@ -32,17 +34,28 @@ module Rif
     end
 
     def describe(prose)
-      @description << prose
+      @description = prose
     end
 
     def description
-      return "An empty room." if @description.empty?
-      @description.join("\n")
+      return "An empty room." if @description.nil?
+      @description
+    end
+
+    def say(prose)
+      @messages << prose
+    end
+
+    def messages
+      @messages.join("\n")
+    end
+
+    def reset!
+      @messages = []
     end
 
     def method_missing(name, *args, &block)
       if name.to_s[0,3] == "on_"
-        puts "defining event `#{name.to_s[3..-1]}`"
         add_event(name.to_s[3..-1].to_sym, block) if block_given?
       elsif name.to_s[-1,1] == "="
         @locals[name.to_s[0..-2].strip.to_sym] = args[0]
