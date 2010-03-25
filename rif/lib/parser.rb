@@ -5,13 +5,16 @@ module Rif
     end
     
     def parse_and_run(cmd)
-      cmd.strip.split(/\s+/).each do |t|
-        run(t)
+      cmd.strip.split(/;/).each do |t|
+        words = t.strip.split(/\s/)
+        first = words[0]
+        rest = words[1..-1]
+        run(first, *rest)
       end
     end
     
-    def run(cmd)
-      puts @commands.send(cmd.to_sym)
+    def run(cmd, *args)
+      puts @commands.send(cmd.to_sym, *args)
     end
   end
 end
