@@ -1,5 +1,7 @@
 module Rif
   class Commands
+
+    attr_reader :game, :state
     
     def initialize(game, state)
       @game = game
@@ -33,7 +35,7 @@ module Rif
         if @state.room.exits.key?(dir)
           @state.room = @game.rooms[Room.sanitise_id(@state.room.exits[dir])]
           @state.turn!
-          @state.room.visit
+          @state.room.trigger_event :visit
         else
           "I can't go that way"
         end

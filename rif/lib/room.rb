@@ -8,8 +8,10 @@ module Rif
     def initialize(id)
       @id = self.class.sanitise_id(id)
       @description = []
+      @events = {:visit => Proc.new { @description = @description[0,1]; @description }}
       @exits = {}
       @locals = {}
+      yield self if block_given?
     end
 
     def id
@@ -21,8 +23,12 @@ module Rif
       @name
     end
 
-    def on_visit(&block)
-      @on_visit = block
+    def add_event(name, block)
+      @events[name] = block
+    end
+
+    def trigger_event(name)
+      @events[name].call unless @events[name].nil?
     end
 
     def describe(prose)
@@ -30,15 +36,15 @@ module Rif
     end
 
     def description
-      @description.empty? ? "None" : @description.join("\n")
+      return "An empty room." if @description.empty?
+      @description.join("\n")
     end
 
-    def set(name, value)
-      @locals[name.to_sym] = value
-    end
-
-    def method_missing(name, *args)
-      if name.to_s[-1,1] == "="
+    def method_missing(name, *args, &block)
+      if name.to_s[0,3] == "on_"
+        puts "defining event `#{name.to_s[3..-1]}`"
+        add_event(name.to_s[3..-1].to_sym, block) if block_given?
+      elsif name.to_s[-1,1] == "="
         @locals[name.to_s[0..-2].strip.to_sym] = args[0]
       end
       @locals[name]
@@ -66,10 +72,5 @@ module Rif
       !! @starting_room
     end
 
-    def visit
-      @description = @description[0,1]
-      @on_visit.call unless @on_visit.nil?
-      description
-    end
   end
 end

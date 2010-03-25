@@ -17,17 +17,18 @@ module Rif
     
     def run!
       restart!
-      puts @state.room.visit
+      puts @state.room.trigger_event :visit
       while cmd = readline('> ')
         break if cmd == 'quit'
         @parser.parse_and_run(cmd)
       end
     end
+
+    class << self
+      def game
+        @game
+      end
+    end
     
   end
-end
-
-at_exit do
-  raise $! if $!
-  Rif::Runner.new(game).run!
 end

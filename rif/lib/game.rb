@@ -1,5 +1,7 @@
 module Rif
   class Game
+
+    attr_reader :rooms
   
     def initialize
       @rooms = {}
@@ -9,12 +11,8 @@ module Rif
       @rooms.find { |r| r.starting_room? }
     end
 
-    def rooms
-      @rooms
-    end
-
-    def add_room(id, room)
-      @rooms[id] = room
+    def add_room(room)
+      @rooms[room.id] = room
     end
 
   end
