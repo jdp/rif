@@ -17,6 +17,10 @@ end
 
 module Rif
   VERSION = 0.1
+  
+  def self.run(runner, game)
+    runner.new(game).run!
+  end
 end
 
 # Expose the DSL
@@ -24,5 +28,5 @@ include Rif::DSL
 
 at_exit do
   raise $! if $!
-  Rif::Runner.new(game).run!
+  Rif.run Rif::Runner, game
 end

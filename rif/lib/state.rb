@@ -1,7 +1,7 @@
 module Rif
   class State
     attr_reader :turns
-    attr_accessor :room
+    attr_writer :room
    
     def initialize(game)
       @game   = game
@@ -11,6 +11,11 @@ module Rif
     
     def turn!
       @turns += 1
+    end
+
+    def room
+      yield @room if block_given?
+      @room
     end
   end
 end

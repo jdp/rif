@@ -1,33 +1,46 @@
 require 'rif/rif'
 
-room_helper :add_monster do |name|
-  @monster = { :name => name }
-end
-
-room_helper :has_monster do
-  ! @monster.nil?
-end
-
-room_helper :monster do
-  @monster
-end
-
-command :attack do |style|
-  if state.room.has_monster
-    "Attacking the #{state.room.monster[:name]} in #{style}"
-  else
-    "Nothing to attack"
+room_helpers do
+  
+  attr_accessor :monster
+  
+  def add_monster name
+    @monster = { :name => name }
   end
+  
+  def has_monster
+    ! @monster.nil?
+  end
+
+end
+
+commands do
+
+  def attack
+    if state.room.has_monster
+      state.room do |r|
+        r.say "Attacking the #{r.monster[:name]}"
+        r.say r.trigger_event(:monster_attacked)
+      end
+      state.room.messages
+    else
+      "Nothing to attack"
+    end
+  end
+  
 end
 
 room :bedroom do |r|
   r.name 'Bedroom'
   r.describe "This is the description of the bedroom"
   r.add_monster :chizpurfle
-  r.on_visit do
+  r.on_enter do
     if r.has_monster
-      r.describe "There is a #{r.monster[:name]} lurking here"
+      "There is a #{r.monster[:name]} lurking here"
     end
+  end
+  r.on_monster_attacked do
+    "The #{r.monster[:name]} retaliates!"
   end
   r.north :hallway
   r.west :study

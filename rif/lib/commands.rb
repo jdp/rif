@@ -34,8 +34,12 @@ module Rif
       define_method(dir) do
         if @state.room.exits.key?(dir)
           @state.room = @game.rooms[Room.sanitise_id(@state.room.exits[dir])]
+          @state.room do |r|
+            r.say r.trigger_event(:look)
+            r.say r.trigger_event(:enter)
+          end
           @state.turn!
-          @state.room.trigger_event :visit
+          @state.room.messages
         else
           "I can't go that way"
         end

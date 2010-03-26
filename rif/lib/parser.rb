@@ -9,12 +9,12 @@ module Rif
         words = t.strip.split(/\s/)
         first = words[0]
         rest = words[1..-1]
-        run(first, *rest)
+        yield run(first, *rest) if block_given?
       end
     end
     
     def run(cmd, *args)
-      puts @commands.send(cmd.to_sym, *args)
+      @commands.send(cmd.to_sym, *args)
     end
   end
 end

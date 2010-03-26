@@ -59,6 +59,8 @@ module Rif
         add_event(name.to_s[3..-1].to_sym, block) if block_given?
       elsif name.to_s[-1,1] == "="
         @locals[name.to_s[0..-2].strip.to_sym] = args[0]
+      else
+        raise "no room helper method #{name}" unless @locals.has_key?(name)
       end
       @locals[name]
     end

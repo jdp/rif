@@ -13,12 +13,12 @@ module Rif
       room
     end
 
-    def room_helper(name, &block)
-      Rif::Room.send(:define_method, name, block)
+    def room_helpers(&block)
+      Rif::Room.class_eval(&block)
     end
 
-    def command(name, &block)
-      Rif::Commands.send(:define_method, name, block)
+    def commands(&block)
+      Rif::Commands.class_eval(&block)
     end
   end
 end
